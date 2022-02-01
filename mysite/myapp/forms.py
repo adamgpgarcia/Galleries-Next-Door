@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 
 from . import models
 
+
+#functions for validating user input
 def must_be_caps(value):
     if not value.isupper():
         raise forms.ValidationError("Not all uppercase")
@@ -21,6 +23,7 @@ def must_be_unique(value):
         raise forms.ValidationError("Email Already Exists")
     return value
 
+#post form 
 class PostForm(forms.Form):
     title = forms.CharField(
         label='Title of Art',
@@ -44,6 +47,7 @@ class PostForm(forms.Form):
     )
 
 
+    #saving user input
     def save(self, request):
         post_instance = models.PostModel()
         post_instance.author = request.user
@@ -53,7 +57,7 @@ class PostForm(forms.Form):
         post_instance.auction_at = self.cleaned_data["auction_at"]
         post_instance.save()
 
-
+#allows users to update their posts 
 class PostUpdateForm(forms.Form):
     title = forms.CharField(
         label='Title of Art',
@@ -75,13 +79,11 @@ class PostUpdateForm(forms.Form):
         min_value = 1
     )
 
+    #saves and updates post
     def save(self, request):
-
         post = models.PostModel.objects.get(id=request.id)
-        print("title", post.title)
-
+        #print("title", post.title)
         post_instance = models.PostModel()
-
         post_instance.title = form.cleaned_data["title"]
         post_instance.image = form.cleaned_data["image"]
         post_instance.image = form.cleaned_data["image"]
@@ -89,7 +91,7 @@ class PostUpdateForm(forms.Form):
         post_instance.auction_at = form.cleaned_data["auction_at"]
         post_instance.save()
 
-
+#comment form 
 class CommentForm(forms.Form):
     comment = forms.CharField(
         label='Comment',
@@ -98,6 +100,7 @@ class CommentForm(forms.Form):
         #validators= [must_be_caps, must_be_bob],    #validate_slug,
     )
 
+    #saves comment
     def save(self, request, sugg_id):
         post_instance = models.PostModel.objects.get(id=sugg_id)
         comment_instance = models.CommentModel()
@@ -108,7 +111,7 @@ class CommentForm(forms.Form):
         return comment_instance
 
 
-
+#new user registration form 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(
         label="Email",
@@ -120,6 +123,7 @@ class RegistrationForm(UserCreationForm):
         model = User
         fields = ("username", "email", "password1", "password2")
 
+    #saves new user
     def save(self, commit=True):
         user = super(RegistrationForm, self).save(commit=False)
         user.email = self.cleaned_data["email"]

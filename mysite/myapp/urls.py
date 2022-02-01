@@ -3,6 +3,7 @@ from django.contrib.auth import views as auth_views
 
 from . import views
 
+#url routing 
 urlpatterns = [
     path('',views.index.as_view(), name="index"),                     #class based view
     path('login/', auth_views.LoginView.as_view()),

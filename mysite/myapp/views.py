@@ -17,7 +17,7 @@ import json
 from . import models
 from . import forms
 
-
+#this function allows the seller to leave a message for the buyer 
 def sellermessage(request, id):
     art = models.PostModel.objects.get(id=id)
     if not request.user.is_authenticated:
@@ -42,6 +42,7 @@ def sellermessage(request, id):
 
     return render(request, "sellermessage.html", context=context)
 
+#register user function 
 def register(request):
     if request.method == "POST":
         form_instance = forms.RegistrationForm(request.POST)
@@ -55,11 +56,12 @@ def register(request):
     }
     return render(request, "registration/register.html", context=context)
 
+#logout function 
 def logout_view(request):
     logout(request)
     return redirect("/login/")
 
-#Auction Views
+#live auction View 
 def auctions(request):
 
     #li = models.Suggestion.objects.all()[page*10:page*10+10]
@@ -76,6 +78,7 @@ def auctions(request):
 
     return render(request, "auction.html", context=context)
 
+#this function shows the user if they are the current items bet leader 
 def art_bet(request, id):
     post = models.PostModel.objects.get(id=id)
     if post.current_bet_leader == request.user:
@@ -92,6 +95,7 @@ def art_bet(request, id):
 
     return render(request, "artbet.html", context=context)
 
+#increases current bet by 1
 def BetOneView(request, id):
     post = models.PostModel.objects.get(id=id)
     post.current_bet += 1
@@ -99,6 +103,7 @@ def BetOneView(request, id):
     post.save()
     return redirect('/auction/' + str(id) + '/')
 
+#increases current bet by 5
 def BetFiveView(request, id):
     post = models.PostModel.objects.get(id=id)
     post.current_bet += 5
@@ -109,7 +114,7 @@ def BetFiveView(request, id):
     return redirect('/auction/' + str(id) + '/')
 
 
-#Add, Delete, Edit Post
+#Add post
 def add_post(request):
     if not request.user.is_authenticated:
         return redirect("/")
@@ -131,6 +136,7 @@ def add_post(request):
     }
     return render(request, "post.html", context=context)
 
+#update post
 def UpdatePost(request, id):
     post = models.PostModel.objects.get(id=id)
     form = forms.PostUpdateForm(initial=model_to_dict(post))
@@ -168,6 +174,7 @@ def UpdatePost(request, id):
 
     return render(request, "edit.html", context=context)
 
+#delete post
 def DeletePost(request, id):
     post = models.PostModel.objects.get(id=id)
     post.delete()
@@ -199,6 +206,7 @@ def LikeView(request, id):
 
     return render(request, "index.html")
 
+#main page view 
 class index(ListView):
 
     model = PostModel
@@ -228,7 +236,6 @@ class index(ListView):
 
 
 #Art Chat View
-
 def art_chat(request, id):
     post = models.PostModel.objects.get(id=id)
     context = {
@@ -297,8 +304,8 @@ def get_posts(request):
 
     return JsonResponse(post_list)
 
+#live action function
 def live_auctions(request):
-
 
     post_objects = models.PostModel.objects.filter(current_state = 1).order_by(
         '-total_likes'
@@ -360,6 +367,7 @@ def live_auctions(request):
 
     return JsonResponse(post_list)
 
+#shows users listings
 def listings(request,page=0):
     if request.user.is_authenticated:
         form_instance = forms.PostForm(request.POST)
@@ -384,6 +392,7 @@ def listings(request,page=0):
 
     return render(request, "listings.html", context=context)
 
+#allows you to add a comment 
 def add_comment(request, post_id):
     if not request.user.is_authenticated:
         return redirect("/")

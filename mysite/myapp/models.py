@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 
-# Create your models here.
 
+#the post model is for art action postings 
 class PostModel(models.Model):
     title = models.CharField(max_length=240)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -55,7 +55,7 @@ class PostModel(models.Model):
         return str(self.id) + " - " + self.author.username                      #string method better method on models page
 
 
-
+#the comment model allows users to leave comments on art posts 
 class CommentModel(models.Model):
     comment = models.CharField(max_length=240)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
